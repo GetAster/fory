@@ -2,21 +2,22 @@
 
 ## Current pins
 
-The C# metadata publication correction is implemented. Nothing in this wave
-is published or adopted by Aster. The canonical fix and the package backport are
-separate from local main, which remains unchanged.
+The C# metadata publication correction and exact tested Apache.Fory
+`1.7.6-aster.1` package are published to Forgejo. Aster dependency adoption and
+release qualification remain pending. The canonical fix and package backport
+are separate from local main, which remains unchanged.
 
-| Repo/package             | Upstream base tag and full SHA                    | Fork tag/version                | Pinned fork SHA                            | Branch                                   |
-| ------------------------ | ------------------------------------------------- | ------------------------------- | ------------------------------------------ | ---------------------------------------- |
-| Fory upstream correction | main `261dc92eabdc5c0fe08748a3ba476ae13f4e8bc9`   | unreleased                      | `345e4c771ccb4a895181fe8cb244ef2b27fb0196` | `fix/csharp-metadata-publication`        |
-| Apache.Fory backport     | v1.7.6 `92483805f93fca4c20a3837f2380b5ee16ef58e7` | local candidate `1.7.6-aster.1` | `fdeb5cd01baa208d128fff7d0c06e3b3e30481e5` | `delivery/csharp-1.7.6-aster.1`          |
-| Aster consumer           | Apache.Fory 1.7.6, same source as above           | upstream package                | no fork pin adopted                        | `bindings/dotnet/src/Aster/Aster.csproj` |
+| Repo/package             | Upstream base tag and full SHA                    | Fork tag/version                      | Pinned fork SHA                            | Branch                                   |
+| ------------------------ | ------------------------------------------------- | ------------------------------------- | ------------------------------------------ | ---------------------------------------- |
+| Fory upstream correction | main `261dc92eabdc5c0fe08748a3ba476ae13f4e8bc9`   | source published; upstream unreleased | `345e4c771ccb4a895181fe8cb244ef2b27fb0196` | `fix/csharp-metadata-publication`        |
+| Apache.Fory backport     | v1.7.6 `92483805f93fca4c20a3837f2380b5ee16ef58e7` | `1.7.6-aster.1`                       | `fdeb5cd01baa208d128fff7d0c06e3b3e30481e5` | `delivery/csharp-1.7.6-aster.1`          |
+| Aster consumer           | Apache.Fory 1.7.6, same source as above           | upstream package                      | no fork pin adopted                        | `bindings/dotnet/src/Aster/Aster.csproj` |
 
 ## Current patch set
 
-| Stable patch ID | Canonical branch                  | Commit subject                                           | Why it is needed                                                                                                             | Upstream issue/PR      | Status                                                        |
-| --------------- | --------------------------------- | -------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------- | ---------------------- | ------------------------------------------------------------- |
-| FORY-CS-001     | `fix/csharp-metadata-publication` | fix(csharp): publish consistent metadata cache snapshots | Shared metadata identity/match writes and resolver hash replacement can return default field values during parallel decoding | pending, not submitted | validated locally on macOS and Linux; packaged, not published |
+| Stable patch ID | Canonical branch                  | Commit subject                                           | Why it is needed                                                                                                             | Upstream issue/PR      | Status                                       |
+| --------------- | --------------------------------- | -------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------- | ---------------------- | -------------------------------------------- |
+| FORY-CS-001     | `fix/csharp-metadata-publication` | fix(csharp): publish consistent metadata cache snapshots | Shared metadata identity/match writes and resolver hash replacement can return default field values during parallel decoding | pending, not submitted | published to Forgejo; Aster adoption pending |
 
 ## Patch sources and stack
 
@@ -205,29 +206,58 @@ the package analyzer generates the ordinary harness model, and the controlled
 tests load that same packaged generator to emit their annotated models.
 The ordinary generated source SHA-256 is identical on both platforms:
 `c8721c84ca0c7dce0b42b9140e76f4aa0938c642a458790474b28fc91be6c788`.
-This proves local artifact consumption, not Forgejo delivery.
+This records pre-publication local artifact consumption. Forgejo publication
+and anonymous delivery verification are recorded separately below.
 
 ## Delivery and consumer adoption
 
-Target feed: `https://forge.emrul.dev/api/packages/Aster/nuget/index.json`.
-Package ID stays `Apache.Fory`. Proposed version `1.7.6-aster.1` was absent
-(anonymous exact-package HTTP 404) during preparation on 2026-10-08; publication
-must recheck immutability. A local package is **packaged, not published**.
-Publication and Aster adoption require their separate follow-up authorization.
+Published feed: `https://forge.emrul.dev/api/packages/Aster/nuget/index.json`.
+Package ID is `Apache.Fory`, exact version `1.7.6-aster.1`. Publication was
+explicitly authorized on 2026-10-08. The original tested archive was uploaded
+without rebuilding, and anonymous download reproduces SHA-256
+`ebd3973298fbefcfdebc223827c53785125b58d309327d0dad1a2e74ba75b341`.
 
-The package must contain the corrected runtime and analyzer, then be consumed
-with analyzers enabled from an isolated NuGet cache. Before publication, compare
-any existing complete file inventory and hashes; never overwrite a different
-artifact at an existing version, publish to nuget.org, or use skip-duplicate as
-integrity evidence. Use the authorized `ASTER_PACKAGE_TOKEN` environment with
-the `agents` account through temporary NuGet configuration, removed afterward.
-Record remotely retrieved package hashes and anonymous consumption separately
-from local validation. Do not record credentials here.
+The complete Forgejo file inventory is exactly:
 
-The following delivery configuration is prepared for the eventual publication;
-remote candidate restore cannot be validated until that publication exists.
-Use it in CI and downstream consumers explicitly, not a developer's global
-configuration:
+| File                                        | SHA-256                                                            |
+| ------------------------------------------- | ------------------------------------------------------------------ |
+| `apache.fory.1.7.6-aster.1.nupkg`           | `ebd3973298fbefcfdebc223827c53785125b58d309327d0dad1a2e74ba75b341` |
+| `apache.fory.nuspec` (extracted by Forgejo) | `5e43aa332cde9bafad970df20a0d54a9f257f8b429716bb1f0482ff661026978` |
+
+The extracted nuspec hash matches the entry inside the tested archive. The
+symbol package was not uploaded. An `agents` package credential was passed
+through an environment variable and temporary NuGet configuration, removed
+after upload. No credential is committed or included in the evidence.
+
+Published source repository: `https://forge.emrul.dev/Aster/fory`.
+The following refs were verified anonymously, with no Git credential helper:
+
+| Ref                                          | Source commit                              |
+| -------------------------------------------- | ------------------------------------------ |
+| `fix/csharp-metadata-publication`            | `345e4c771ccb4a895181fe8cb244ef2b27fb0196` |
+| `backport/csharp-metadata-publication-1.7.6` | `e8109b29604aa409d0b65313d7d52eca9c4415fe` |
+| `v1.7.6-aster.1` (annotated tag)             | `fdeb5cd01baa208d128fff7d0c06e3b3e30481e5` |
+
+The delivery branches `delivery/csharp-metadata-publication` and
+`delivery/csharp-1.7.6-aster.1` also carry the committed living ledger. The tag
+continues to name the exact package source; subsequent ledger-only commits do
+not change the immutable package or its source provenance.
+
+For future delivery, compare the entire existing file inventory and hashes;
+never overwrite different bytes at an existing version, publish this fork to
+nuget.org, or rely on skip-duplicate as integrity evidence. The Forgejo-extracted
+nuspec is part of that inventory, alongside the uploaded nupkg.
+
+Post-publication anonymous fresh-cache consumption passed on macOS ARM64:
+`Apache.Fory` at exact `[1.7.6-aster.1]` resolved from Forgejo; archive, runtime,
+analyzer and generated-source SHA-256 hashes all match the tested candidate.
+All six regression tests passed, followed by 2 million complete-value-checked
+parallel independent-codec decodes per tracking mode. The source mapping,
+resolved assets, commands and logs are retained in `PUBLISHED_VALIDATION.txt`
+and the `forgejo-consumer` evidence directory. No Aster dependency was changed.
+
+Use this explicit source configuration in CI and downstream consumers rather
+than relying on a developer's global NuGet configuration:
 
 ```xml
 <configuration>
@@ -270,12 +300,10 @@ JIT disassembly, consumer source/configuration/assets and package inventories.
 The local package is at
 `/Users/emrul/dev/aster/fory-csharp-1.7.6/artifacts/nuget/Apache.Fory.1.7.6-aster.1.nupkg`.
 
-The recommendation is the narrowly patched 1.7.6 fork package above, subject to
-separately authorized publication and Aster qualification. Pending work:
+The recommended narrowly patched 1.7.6 fork package is published as above.
+Aster adoption and qualification are separate follow-ups. Pending work:
 
 - Upstream issue/PR submission and upstream release absorption.
-- Source publication and NuGet publication to Forgejo, immutable remote inventory
-  verification, anonymous fresh-cache restore and resolved source verification.
 - Aster dependency/provenance adoption, concurrent RPC integrity test and full
   .NET release gate against the fresh exact release candidate.
 - Higher-precision cold-start performance evidence if a strict paired sub-1%
