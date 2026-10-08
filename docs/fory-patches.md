@@ -137,8 +137,10 @@ sub-1% paired result. All samples are retained; no further sampling was used to
 select a passing result. First-codec allocations rise by 16 bytes (13216 to
 13232 without refs; 13272 to 13288 with refs), replacing the old lock object
 with a 40-byte immutable snapshot. A second resolver configuration adds 40 bytes
-(8576 to 8616 without refs; 8632 to 8672 with refs). These bounded cold costs
-are part of the correctness fix.
+(8576 to 8616 without refs; 8632 to 8672 with refs). The second-codec cold timing medians were 66.792/61.250 microseconds without
+refs and 65.166/69.875 microseconds with refs; they also include lazy runtime
+work and should not be presented as a steady-state comparison. These cold
+allocation and timing costs are recorded as tradeoffs of the correctness fix.
 
 Harness invocation (run each baseline/fixed side separately, never concurrently):
 
