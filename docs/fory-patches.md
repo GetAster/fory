@@ -70,7 +70,9 @@ Corrected suite: 383 passed, zero failures/skips. Java-driven
 Release build and `dotnet format Fory.sln --verify-no-changes` pass.
 The verified 1.7.6 source baseline independently fails all six regressions;
 the backport passes all 383 C# tests, builds with zero warnings/errors and
-passes formatting. Linux x64 with SDK 9.0.318/runtime 9.0.20: all four controlled original
+passes formatting. Its separate Java prerequisite build and
+`org.apache.fory.xlang.CSharpXlangTest` also pass all 107 tests, with zero
+failures/errors/skips; the mainline result is not substituted for this run. Linux x64 with SDK 9.0.318/runtime 9.0.20: all four controlled original
 first-use/independent-codec cases fail, while the two unscheduled replacement
 cases pass in that run. The fixed source suite passes all 383 tests. These
 platform differences reflect the deliberately scheduled versus unscheduled
