@@ -6,29 +6,32 @@ Aster consumes Fory's Rust crates (`fory-core`, `fory-derive`, version 1.7.6) un
 
 ## Branch and tag model
 
-- `main` is the front door: upstream's README with an Aster preamble, plus this ledger. Nothing is built from `main`.
-- `upgrade/<version>` is the patched integration line for one upstream release wave: the upstream release plus the patches in this ledger. Consumers pin it by commit.
-- Topic branches carry one change each and are named for what the change is, for example `feat/read-into` or `security/plumtree-bounds`. Each is based on the upstream release tag and is cherry-picked with `git cherry-pick -x` onto the upgrade branch, so every upgrade-branch commit names its source.
-- Release tags mark the commits that are released and pinned. Published tags are never moved or rewritten. Historical tags in this repository use several schemes (listed below); new tags use `aster-<repo>-v<version>`, where `<version>` is the published version of the repository's main package (for example `aster-salvo-v1.0.4`, `aster-fory-v1.7.6-aster.1`).
-- `main` is refreshed by merging upstream `main` into it. It is not force-pushed.
+- `main` is upstream `main` plus one commit: the Aster README preamble and this ledger. Nothing is built from `main`. It is refreshed with `git merge upstream/main` and is never reset or force-pushed. Ledger edits are commits on `main`, never on `upgrade/*`.
+- `upgrade/<repo>-v<upstream version>` (for example `upgrade/iroh-v1.4.0`, `upgrade/iroh-blobs-v0.103.1`) is the patched integration line: the upstream release plus the patches in this ledger. A new upstream base always gets a new branch, cut from the upstream release tag; Aster-only fixes and re-pins append to the current branch. Per-minor names (`upgrade/iroh-blobs-v0.103`, `upgrade/salvo-v1.0`, …) are historical. Consumers pin commits on it. Published `upgrade/*` branches and tags are never rewritten; a failed attempt is superseded by new commits and a new version.
+- Topic branches carry one change each, are named for the change (for example `feat/read-into`, `security/plumtree-bounds`), are based on the upstream release tag, and are cherry-picked with `git cherry-pick -x` onto the upgrade branch, so every upgrade-branch commit names its source.
+- Version: the upstream version if Aster's registry has never served that version or a higher one in the series; otherwise the next patch above Aster's highest published version. A re-pin without a code change keeps the version and takes the tag suffix `-p<n>`.
+- Tags: `aster-<repo>-v<published version>` (re-pins `aster-<repo>-v<published version>-p<n>`), created only after the Aster consumer trial passes against those exact commits, because tags cannot be moved.
+- The fork manifest is `iroh-fork-manifest.toml` in the Aster repository (the only copy).
+- Aster does not submit patches upstream; upstream maintainers are welcome to take any patch here.
 
-Tag schemes used in this repository:
+Historical and current tag schemes in this repository:
 
-- `v<upstream version>-aster.<n>`: `v1.7.6-aster.1` (annotated; names the exact source of the `Apache.Fory 1.7.6-aster.1` package).
+- `v<upstream version>-aster.<n>`: `v1.7.6-aster.1` (annotated; names the exact source of the `Apache.Fory 1.7.6-aster.1` package). Legacy scheme; this is the real 1.7.6 tag.
+- `aster-fory-v<published version>`, for new tags, where the published version is the NuGet package version `<upstream version>-aster.<n>`: for example `aster-fory-v1.7.7-aster.1`. `aster-fory-v1.7.6-aster.1` is only an illustrative example of the form; no such tag exists, because 1.7.6 was tagged `v1.7.6-aster.1` before this scheme.
 
 ## Current release
 
 | Field | Value |
 |---|---|
 | Upstream base | `v1.7.6` (`92483805f93fca4c20a3837f2380b5ee16ef58e7`) |
-| Integration branch | `upgrade/fory-v1.7.6`, at the tip of `delivery/csharp-1.7.6-aster.1` |
+| Integration branch | `upgrade/fory-v1.7.6`, at the tip of `delivery/csharp-1.7.6-aster.1` (`1c4521745`) |
 | Tag | `v1.7.6-aster.1` → packaging commit `fdeb5cd01baa208d128fff7d0c06e3b3e30481e5` |
 | Package | NuGet `Apache.Fory` `1.7.6-aster.1` |
 | Package feed | `https://forge.emrul.dev/api/packages/Aster/nuget/index.json` |
 | Source repository | `https://forge.emrul.dev/Aster/fory` |
 | Aster consumer | `bindings/dotnet/src/Aster/Aster.csproj` in the Aster repository |
 
-The integration line is: upstream `v1.7.6`, then the backport of FORY-CS-001 (`e8109b29604aa409d0b65313d7d52eca9c4415fe`, a clean `cherry-pick -x` of `345e4c771ccb4a895181fe8cb244ef2b27fb0196`), then the packaging commit `fdeb5cd0…` (package version and repository URL only, kept separate from the logical fix), then ledger-only commits. Ledger commits after the tag do not change the immutable package or its provenance.
+The integration line is: upstream `v1.7.6`, then the backport of FORY-CS-001 (`e8109b29604aa409d0b65313d7d52eca9c4415fe`, a clean `cherry-pick -x` of `345e4c771ccb4a895181fe8cb244ef2b27fb0196`), then the packaging commit `fdeb5cd0…` (package version and repository URL only, kept separate from the logical fix). The ledger lives on `main`. The four docs commits past the tag on `upgrade/fory-v1.7.6` (`63af890b9`…`1c4521745`) are historical, from before the current model; they do not change the immutable package or its provenance, and no further ledger commits go on `upgrade/*`.
 
 Branches (all verified anonymously on Forgejo, with no Git credential helper, where a commit is given):
 
@@ -36,7 +39,7 @@ Branches (all verified anonymously on Forgejo, with no Git credential helper, wh
 |---|---|---|
 | `fix/csharp-metadata-publication` | Canonical topic branch for FORY-CS-001, on upstream `main` `261dc92eabdc5c0fe08748a3ba476ae13f4e8bc9` | `345e4c771ccb4a895181fe8cb244ef2b27fb0196` |
 | `backport/csharp-metadata-publication-1.7.6` | Canonical backport onto `v1.7.6` | `e8109b29604aa409d0b65313d7d52eca9c4415fe` |
-| `delivery/csharp-1.7.6-aster.1` | Backport + packaging commit + this ledger; source of the published package | tag `v1.7.6-aster.1` at `fdeb5cd01baa208d128fff7d0c06e3b3e30481e5` |
+| `delivery/csharp-1.7.6-aster.1` | Backport + packaging commit + the historical ledger commits; source of the published package | tag `v1.7.6-aster.1` at `fdeb5cd01baa208d128fff7d0c06e3b3e30481e5` |
 | `delivery/csharp-metadata-publication` | The mainline fix plus this ledger | — |
 | `upgrade/fory-v1.7.6` | Integration branch under the current model; same tip as `delivery/csharp-1.7.6-aster.1` | — |
 
@@ -73,7 +76,7 @@ Restore with this configuration into a fresh `NUGET_PACKAGES` directory and veri
 
 | Id | Topic branch | What | Why / what in Aster depends on it | Commits (topic / upgrade) | Status | Conflict or porting notes |
 |---|---|---|---|---|---|---|
-| FORY-CS-001 | `fix/csharp-metadata-publication` (based on upstream `main` `261dc92e…`) | fix(csharp): publish consistent metadata cache snapshots. The generator publishes an immutable snapshot of the resolver version and both local metadata header hashes with acquire/release semantics. Each invocation keeps its snapshot even if a different codec publishes another. A direct header comparison replaces the redundant remote-identity/Boolean memoisation; there is no separately published match flag. Wire bytes, public APIs, compatible field dispatch and parallel root decoding are unchanged. Files: `csharp/src/Fory.Generator/ForyModelGenerator.Emission.cs`, `csharp/tests/Fory.Tests/ForyGeneratorTests.cs`, `csharp/tests/Fory.Tests/MetadataPublicationTests.cs`. | Shared metadata identity/match writes and resolver hash replacement could return default field values during parallel decoding. Aster's .NET binding (`Apache.Fory` consumer) is the user; its concurrent RPC integrity test is the adoption gate. This is a C#-local cache correction: shared protocol, type mappings and wire semantics are unchanged. | `345e4c771ccb4a895181fe8cb244ef2b27fb0196` / backport `e8109b29604aa409d0b65313d7d52eca9c4415fe` (on `v1.7.6`, clean `cherry-pick -x`) | carried (upstream issue/PR not yet submitted) | No prerequisite patches. Apply the fix first, then the separate packaging change, then the ledger. The metadata emitter and runtime sources are identical between the two baselines (`261dc92e` and `v1.7.6`). Future changes to `VersionHash`, local metadata hash ownership, generated compatible reads or hierarchy providers need re-review. Never carry a cached Boolean separately from its metadata identity, nor read mutable shared hashes after checking only a shared resolver version. `VersionHash()` is a semantic configuration fingerprint, not a resolver-local counter, on both baselines, so equal counters with differing configurations are not a supported case to synthesise. Independent codec tests use different registration names, hence different metadata hashes and resolver versions. Sequential registration between completed operations is supported and covered; concurrent registration is not introduced. |
+| FORY-CS-001 | `fix/csharp-metadata-publication` (based on upstream `main` `261dc92e…`) | fix(csharp): publish consistent metadata cache snapshots. The generator publishes an immutable snapshot of the resolver version and both local metadata header hashes with acquire/release semantics. Each invocation keeps its snapshot even if a different codec publishes another. A direct header comparison replaces the redundant remote-identity/Boolean memoisation; there is no separately published match flag. Wire bytes, public APIs, compatible field dispatch and parallel root decoding are unchanged. Files: `csharp/src/Fory.Generator/ForyModelGenerator.Emission.cs`, `csharp/tests/Fory.Tests/ForyGeneratorTests.cs`, `csharp/tests/Fory.Tests/MetadataPublicationTests.cs`. | Shared metadata identity/match writes and resolver hash replacement could return default field values during parallel decoding. Aster's .NET binding (`Apache.Fory` consumer) is the user; its concurrent RPC integrity test is the adoption gate. This is a C#-local cache correction: shared protocol, type mappings and wire semantics are unchanged. | `345e4c771ccb4a895181fe8cb244ef2b27fb0196` / backport `e8109b29604aa409d0b65313d7d52eca9c4415fe` (on `v1.7.6`, clean `cherry-pick -x`) | carried | No prerequisite patches. Apply the fix first, then the separate packaging change (the ledger lives on `main`, not on the upgrade branch). The metadata emitter and runtime sources are identical between the two baselines (`261dc92e` and `v1.7.6`). Future changes to `VersionHash`, local metadata hash ownership, generated compatible reads or hierarchy providers need re-review. Never carry a cached Boolean separately from its metadata identity, nor read mutable shared hashes after checking only a shared resolver version. `VersionHash()` is a semantic configuration fingerprint, not a resolver-local counter, on both baselines, so equal counters with differing configurations are not a supported case to synthesise. Independent codec tests use different registration names, hence different metadata hashes and resolver versions. Sequential registration between completed operations is supported and covered; concurrent registration is not introduced. |
 
 ### Upstreamed or dropped
 
@@ -84,10 +87,32 @@ Restore with this configuration into a fresh `NUGET_PACKAGES` directory and veri
 ## Porting to a new upstream release
 
 - Keep the canonical logical fix as one commit on its own topic branch. Port it with `cherry-pick -x` and keep the source branch.
-- Keep packaging changes and this ledger out of the upstream contribution, in separate commits.
+- Keep the packaging change in its own commit, separate from the logical fix; this ledger lives on `main`. Aster does not submit the fix upstream; the README invites upstream maintainers to take it.
 - Never rewrite published history or tags.
 - Compare against the upstream target, and check semantic equivalence when patch IDs differ (upstream may absorb the fix in a different form).
 - Delivery: compare the entire existing Forgejo file inventory and hashes before publishing. Never overwrite different bytes at an existing version, never publish this fork to nuget.org, and never treat skip-duplicate as integrity evidence. The Forgejo-extracted nuspec is part of the inventory, alongside the uploaded nupkg. Deliver the tested archive as-is: rebuilding can change package bytes at the same version.
+
+Steps for a new upstream release `v<ver>` (remote `apache` is upstream, `origin` the Forge):
+
+```sh
+git fetch apache --tags
+git push origin v<ver>                                  # mirror the apache release tag to the Forge
+git switch -c upgrade/fory-v<ver> v<ver>
+git cherry-pick -x e8109b29604aa409d0b65313d7d52eca9c4415fe   # FORY-CS-001 (the 1.7.6 backport), unless upstream absorbed it
+# packaging commit, separate from the fix: package version <ver>-aster.1 and the repository URL only
+git commit -am "build(csharp): prepare Apache.Fory <ver>-aster.1 package"
+git push origin upgrade/fory-v<ver>
+```
+
+1. Validate (commands below), from `csharp/` on the packaging commit.
+2. Pack from the packaging commit, with `-p:RepositoryCommit=<packaging commit>` (pack command below).
+3. Run the Aster consumer trial against that exact archive (a local directory feed mapped exclusively to `Apache.Fory`, as in the 1.7.6 pre-publication check).
+4. Tag the packaging commit, only after validation and the consumer trial pass: `git tag -a aster-fory-v<ver>-aster.1 -m "Aster Apache.Fory <ver>-aster.1" <packaging commit>` and `git push origin aster-fory-v<ver>-aster.1`.
+5. Upload the tested archive, as-is, to the Forgejo NuGet feed `https://forge.emrul.dev/api/packages/Aster/nuget/index.json` (never nuget.org), with a package credential passed through an environment variable and a temporary NuGet configuration (never committed): `dotnet nuget push ../artifacts/nuget/Apache.Fory.<ver>-aster.1.nupkg --source https://forge.emrul.dev/api/packages/Aster/nuget/index.json --api-key "$FORGE_NUGET_TOKEN"`. Then verify the Forgejo file inventory and hashes (Delivery, above).
+6. Aster bumps its `Apache.Fory` pin (`bindings/dotnet/src/Aster/Aster.csproj`, `Version="[<ver>-aster.1]"`) and runs its .NET release gate.
+7. Update this ledger on `main` (merge upstream `main` first).
+
+A further Aster-only fix on the same upstream base is a topic branch cherry-picked `-x` onto the current upgrade branch, followed by a packaging commit at `<ver>-aster.<n+1>`; never republish different bytes at an existing version.
 
 Validation commands (C# commands run from `csharp/`):
 
@@ -103,11 +128,11 @@ FORY_CSHARP_JAVA_CI=1 ENABLE_FORY_DEBUG_OUTPUT=1 mvn -T16 test -Dtest=org.apache
 
 Upstream's current validation rules require the C# peer suite for this scope, not unrelated runtime peers.
 
-Pack command, from the backport's `csharp/` directory:
+Pack command, from the packaging commit's `csharp/` directory (for 1.7.6 the packaging commit was `fdeb5cd01baa208d128fff7d0c06e3b3e30481e5`):
 
 ```sh
 dotnet pack src/Fory/Fory.csproj -c Release \
-  -p:RepositoryCommit=fdeb5cd01baa208d128fff7d0c06e3b3e30481e5 \
+  -p:RepositoryCommit=<packaging commit> \
   -p:ContinuousIntegrationBuild=true -o ../artifacts/nuget
 ```
 
@@ -122,8 +147,8 @@ dotnet <harness-baseline-or-fixed>/Harness.dll cold true <evidence-directory>
 
 Remaining work:
 
-- Submit the upstream issue/PR and absorb the upstream release.
-- Aster dependency/provenance adoption, the concurrent RPC integrity test and the full .NET release gate against the fresh exact release candidate.
+- Absorb an upstream release once one contains the fix (Aster does not submit upstream; the README invites upstream maintainers to take it).
+- The concurrent RPC integrity test and the full .NET release gate against the fresh exact release candidate (Aster dependency adoption is done: the .NET binding pins `Apache.Fory [1.7.6-aster.1]`).
 - Higher-precision cold-start performance evidence if a strict paired sub-1% claim is needed; the bounded results below preserve the uncertainty.
 
 ## History
