@@ -1,3 +1,22 @@
+<!--
+Licensed to the Apache Software Foundation (ASF) under one
+or more contributor license agreements.  See the NOTICE file
+distributed with this work for additional information
+regarding copyright ownership.  The ASF licenses this file
+to you under the Apache License, Version 2.0 (the
+"License"); you may not use this file except in compliance
+with the License.  You may obtain a copy of the License at
+
+  http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing,
+software distributed under the License is distributed on an
+"AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+KIND, either express or implied.  See the License for the
+specific language governing permissions and limitations
+under the License.
+-->
+
 # Fory C++ Hello Row (Row Format)
 
 This example demonstrates how to use Fory's row format for cache-friendly binary random access.
@@ -77,7 +96,7 @@ For your own project using Fory as a dependency:
 
 ```bazel
 # In your MODULE.bazel
-bazel_dep(name = "fory", version = "1.7.7")
+bazel_dep(name = "fory", version = "1.7.8")
 git_override(
     module_name = "fory",
     remote = "https://github.com/apache/fory.git",

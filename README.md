@@ -4,6 +4,25 @@
 > `main` plus this notice and the ledger. Upstream maintainers are welcome to
 > incorporate our patches at their discretion.
 
+<!--
+Licensed to the Apache Software Foundation (ASF) under one
+or more contributor license agreements.  See the NOTICE file
+distributed with this work for additional information
+regarding copyright ownership.  The ASF licenses this file
+to you under the Apache License, Version 2.0 (the
+"License"); you may not use this file except in compliance
+with the License.  You may obtain a copy of the License at
+
+  http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing,
+software distributed under the License is distributed on an
+"AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+KIND, either express or implied.  See the License for the
+specific language governing permissions and limitations
+under the License.
+-->
+
 <div align="center">
   <img width="65%" alt="Apache Fory logo" src="docs/images/fory-logo.png"><br>
 </div>
@@ -12,7 +31,7 @@
 [![Slack Channel](https://img.shields.io/badge/slack-join-3f0e40?logo=slack&style=for-the-badge)](https://join.slack.com/t/fory-project/shared_invite/zt-36g0qouzm-kcQSvV_dtfbtBKHRwT5gsw)
 [![X](https://img.shields.io/badge/@ApacheFory-follow-blue?logo=x&style=for-the-badge)](https://x.com/ApacheFory)
 [![Maven Version](https://img.shields.io/maven-central/v/org.apache.fory/fory-core?style=for-the-badge)](https://search.maven.org/#search|gav|1|g:"org.apache.fory"%20AND%20a:"fory-core")
-[![Crates.io](https://img.shields.io/badge/crates.io-v1.7.7-blue?logo=rust&style=for-the-badge)](https://crates.io/crates/fory)
+[![Crates.io](https://img.shields.io/badge/crates.io-v1.7.8-blue?logo=rust&style=for-the-badge)](https://crates.io/crates/fory)
 [![PyPI](https://img.shields.io/pypi/v/pyfory.svg?logo=PyPI&style=for-the-badge)](https://pypi.org/project/pyfory/)
 [![npm](https://img.shields.io/npm/v/%40apache-fory%2Fcore?logo=npm&style=for-the-badge)](https://www.npmjs.com/package/@apache-fory/core)
 [![NuGet](https://img.shields.io/nuget/v/Apache.Fory?logo=nuget&style=for-the-badge)](https://www.nuget.org/packages/Apache.Fory)
@@ -156,14 +175,14 @@ Maven:
 <dependency>
   <groupId>org.apache.fory</groupId>
   <artifactId>fory-core</artifactId>
-  <version>1.7.7</version>
+  <version>1.7.8</version>
 </dependency>
 ```
 
 Gradle:
 
 ```gradle
-implementation "org.apache.fory:fory-core:1.7.7"
+implementation "org.apache.fory:fory-core:1.7.8"
 ```
 
 On JDK25+, opening `java.lang.invoke` to Fory core is also recommended. It avoids the
@@ -185,7 +204,7 @@ Use the Fory core module name when Fory is on the module path:
 sbt:
 
 ```scala
-libraryDependencies += "org.apache.fory" %% "fory-scala" % "1.7.7"
+libraryDependencies += "org.apache.fory" %% "fory-scala" % "1.7.8"
 ```
 
 **Kotlin**
@@ -193,7 +212,7 @@ libraryDependencies += "org.apache.fory" %% "fory-scala" % "1.7.7"
 Gradle:
 
 ```kotlin
-implementation("org.apache.fory:fory-kotlin:1.7.7")
+implementation("org.apache.fory:fory-kotlin:1.7.8")
 ```
 
 Maven:
@@ -202,7 +221,7 @@ Maven:
 <dependency>
   <groupId>org.apache.fory</groupId>
   <artifactId>fory-kotlin</artifactId>
-  <version>1.7.7</version>
+  <version>1.7.8</version>
 </dependency>
 ```
 
@@ -224,7 +243,7 @@ pip install "pyfory[format]"
 
 ```toml
 [dependencies]
-fory = "1.7.7"
+fory = "1.7.8"
 ```
 
 **C++**
@@ -236,7 +255,7 @@ include(FetchContent)
 FetchContent_Declare(
   fory
   GIT_REPOSITORY https://github.com/apache/fory.git
-  GIT_TAG v1.7.7
+  GIT_TAG v1.7.8
   SOURCE_SUBDIR cpp
 )
 FetchContent_MakeAvailable(fory)
@@ -247,8 +266,8 @@ Bazel:
 
 ```bazel
 # MODULE.bazel
-bazel_dep(name = "fory", version = "1.7.7")
-git_override(module_name = "fory", remote = "https://github.com/apache/fory.git", commit = "v1.7.7")
+bazel_dep(name = "fory", version = "1.7.8")
+git_override(module_name = "fory", remote = "https://github.com/apache/fory.git", commit = "v1.7.8")
 
 # BUILD
 deps = ["@fory//cpp/fory/serialization:fory_serialization"]
@@ -281,13 +300,13 @@ npm install @apache-fory/core @apache-fory/hps
 **C#**
 
 ```bash
-dotnet add package Apache.Fory --version 1.7.7
+dotnet add package Apache.Fory --version 1.7.8
 ```
 
 **Dart**
 
 ```bash
-dart pub add fory:^1.7.7
+dart pub add fory:^1.7.8
 dart pub add dev:build_runner
 ```
 
@@ -297,7 +316,7 @@ Add Fory to `Package.swift`:
 
 ```swift
 dependencies: [
-  .package(url: "https://github.com/apache/fory.git", exact: "1.7.7")
+  .package(url: "https://github.com/apache/fory.git", exact: "1.7.8")
 ],
 targets: [
   .target(
@@ -868,14 +887,14 @@ Add Fory JSON to your project:
 <dependency>
   <groupId>org.apache.fory</groupId>
   <artifactId>fory-json</artifactId>
-  <version>1.7.7</version>
+  <version>1.7.8</version>
 </dependency>
 ```
 
 **Gradle**
 
 ```gradle
-implementation "org.apache.fory:fory-json:1.7.7"
+implementation "org.apache.fory:fory-json:1.7.8"
 ```
 
 Keep all Fory modules in the same application on the same version.
