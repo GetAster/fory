@@ -2,7 +2,7 @@
 
 This repository is Aster's fork of [apache/fory](https://github.com/apache/fory). Aster carries the patches listed below on top of upstream releases. Upstream maintainers are welcome to incorporate any of them, in whole or in part, at their discretion.
 
-Aster consumes Fory's Rust crates (`fory-core`, `fory-derive`, version 1.7.7) unmodified from crates.io; they are not mirrored or republished. The patch carried here is in the C# implementation, delivered as an Aster-built `Apache.Fory` NuGet package.
+Since 2026-11-24 this fork carries no Aster patch: Aster consumes stock `Apache.Fory` 1.7.8 from nuget.org and `fory-core` and `fory-derive` 1.7.8 from crates.io, unmodified and not mirrored or republished. Until then the fork carried one C# patch (FORY-CS-001), delivered as an Aster-built `Apache.Fory` NuGet package; it landed upstream and is released in v1.7.8 (see "Upstreamed or dropped"). The fork remains as a placeholder with its ledger and history; whether to keep it or archive it is an owner decision (INFO_NEEDED).
 
 ## Branch and tag model
 
@@ -12,7 +12,7 @@ Aster consumes Fory's Rust crates (`fory-core`, `fory-derive`, version 1.7.7) un
 - Version: the upstream version if Aster's registry has never served that version or a higher one in the series; otherwise the next patch above Aster's highest published version. A re-pin without a code change keeps the version and takes the tag suffix `-p<n>`.
 - Tags: `aster-<repo>-v<published version>` (re-pins `aster-<repo>-v<published version>-p<n>`), created only after the Aster consumer trial passes against those exact commits, because tags cannot be moved.
 - The fork manifest is `iroh-fork-manifest.toml` in the Aster repository (the only copy).
-- Aster does not submit patches upstream; upstream maintainers are welcome to take any patch here.
+- This ledger has said that Aster does not submit patches upstream and that upstream maintainers are welcome to take any patch here. Recorded fact: FORY-CS-001 was submitted to apache/fory as PR #4152 (issue #4151) from the owner's account and merged as `b6023929b` (see "Upstreamed or dropped"). Nothing else in this ledger changes with that.
 
 Historical and current tag schemes in this repository:
 
@@ -20,6 +20,22 @@ Historical and current tag schemes in this repository:
 - `aster-fory-v<published version>`, for new tags, where the published version is the NuGet package version `<upstream version>-aster.<n>`: first `aster-fory-v1.7.7-aster.1`. `aster-fory-v1.7.6-aster.1` is only an illustrative example of the form; no such tag exists, because 1.7.6 was tagged `v1.7.6-aster.1` before this scheme.
 
 ## Current release
+
+| Field | Value |
+|---|---|
+| Upstream base | `v1.7.8` (`6f67e5b4978f909d614b990482063e332019f015`) |
+| Aster patch | none |
+| Aster consumption | stock `Apache.Fory` 1.7.8 (NuGet, nuget.org) and `fory-core` and `fory-derive` 1.7.8 (crates.io); no Aster package, no tag and no `upgrade/fory-v1.7.8` branch |
+| Integration branch | none while the patch list is empty (a new `upgrade/fory-v<ver>` is cut only when an Aster-only patch exists) |
+| Tag | none (`aster-fory-v1.7.7-aster.1` is the last Aster tag) |
+| Aster consumer | `bindings/dotnet/src/Aster/Aster.csproj` in the Aster repository, `Version="[1.7.8]"`; the repository's `NuGet.Config` is nuget.org only |
+| Source repository | `https://forge.emrul.dev/Aster/fory` |
+
+Provenance of the consumed package: nuget.org `Apache.Fory` 1.7.8, `apache.fory.1.7.8.nupkg`, 187,623 bytes, SHA-256 `7d18fa6d5ff09784fc398bda9194f7180b3a6cc88b402b07e7aaac74ff4fd068`; its nuspec names repository commit `6f67e5b4978f909d614b990482063e332019f015`, the `v1.7.8` tag. nuget.org cannot republish different bytes at 1.7.8. crates.io `fory-core` 1.7.8 and `fory-derive` 1.7.8 (not yanked, published 2026-11-13). Only Aster's Rust and .NET bindings are on 1.7.8; the Java, Python, TypeScript and Go bindings stay on 1.7.7 (the xlang wire is unchanged between the two; see the 2026-11-24 History entry for what to check before moving them).
+
+The 1.7.7-aster.1 package stays on the Forge feed for reproducibility of older Aster releases; it is not deleted. The Forge NuGet package endpoints now require a token: on 2026-11-24 an anonymous request for the package index or the nupkg returns 401, and the package inventory API returns 403, so a consumer without a package-read token cannot restore the fork packages (the 1.7.8 consumption removes this requirement for the Fory dependency).
+
+### Previous release: `Apache.Fory 1.7.7-aster.1` (2026-10-21 to 2026-11-24)
 
 | Field | Value |
 |---|---|
@@ -35,7 +51,7 @@ The integration line is: upstream `v1.7.7`, then FORY-CS-001 (`3e7593710`, a cle
 
 The previous line, `upgrade/fory-v1.7.6` (tag `v1.7.6-aster.1` → packaging commit `fdeb5cd0`, package `Apache.Fory 1.7.6-aster.1`), is unchanged; its four docs commits past the tag (`63af890b9`…`1c4521745`) are historical, from before the current model, and no further ledger commits go on `upgrade/*`.
 
-Branches (all verified anonymously on Forgejo, with no Git credential helper, where a commit is given):
+Branches. The commits below were verified anonymously on Forgejo, with no Git credential helper, when this was written (2026-10); that claim no longer holds: on 2026-11-24 anonymous access to `Aster/fory` on the Forge fails (a git request asks for a username, and the repository page returns 404), and the Forge NuGet package endpoints need a token. Re-verification needs a token. Where a commit is given:
 
 | Branch | Role | Commit |
 |---|---|---|
@@ -46,7 +62,7 @@ Branches (all verified anonymously on Forgejo, with no Git credential helper, wh
 | `upgrade/fory-v1.7.6` | Previous integration branch; same tip as `delivery/csharp-1.7.6-aster.1` | — |
 | `upgrade/fory-v1.7.7` | Current integration branch: `v1.7.7` + FORY-CS-001 + packaging; source of `Apache.Fory 1.7.7-aster.1` | `7a299ebce2d5c7b966ef7857ae1ba1af182f01a4` (tag `aster-fory-v1.7.7-aster.1`) |
 
-Aster has adopted it: the Aster .NET binding pins `Apache.Fory [1.7.7-aster.1]` (from 2026-10-21; `[1.7.6-aster.1]` before), and Aster's Rust, Java, Python, TypeScript and Go bindings moved to upstream Fory 1.7.7 in the same change, so every binding is on 1.7.7.
+Aster adopted it: the Aster .NET binding pinned `Apache.Fory [1.7.7-aster.1]` (from 2026-10-21; `[1.7.6-aster.1]` before) until 2026-11-24, when it moved to stock `[1.7.8]`. Aster's Rust, Java, Python, TypeScript and Go bindings moved to upstream Fory 1.7.7 in the same 2026-10-21 change, so every binding was on 1.7.7; Rust and .NET have since moved to 1.7.8.
 
 Consumer status at the time of the 1.7.6 delivery (2026-10-08): the package and its source were published, but Aster's dependency adoption and release qualification were pending (Aster then used upstream `Apache.Fory 1.7.6`, with no fork pin). Adoption requires Aster to:
 
@@ -57,7 +73,7 @@ Consumer status at the time of the 1.7.6 delivery (2026-10-08): the package and 
 
 These steps do not follow automatically from Fory unit tests.
 
-NuGet source configuration for CI and downstream consumers (do not rely on a developer's global NuGet configuration):
+NuGet source configuration that the 1.7.7-aster.1 package required (historical: no longer needed since 1.7.8, and the Forge feed needs a package-read token; do not rely on a developer's global NuGet configuration):
 
 ```xml
 <configuration>
@@ -77,20 +93,24 @@ Restore with this configuration into a fresh `NUGET_PACKAGES` directory and veri
 
 ## Patches
 
+None. FORY-CS-001, the only patch, landed upstream and is released in v1.7.8 (below). The table header is kept for the next patch.
+
 | Id | Topic branch | What | Why / what in Aster depends on it | Commits (topic / upgrade) | Status | Conflict or porting notes |
 |---|---|---|---|---|---|---|
-| FORY-CS-001 | `fix/csharp-metadata-publication` (based on upstream `main` `261dc92e…`) | fix(csharp): publish consistent metadata cache snapshots. The generator publishes an immutable snapshot of the resolver version and both local metadata header hashes with acquire/release semantics. Each invocation keeps its snapshot even if a different codec publishes another. A direct header comparison replaces the redundant remote-identity/Boolean memoisation; there is no separately published match flag. Wire bytes, public APIs, compatible field dispatch and parallel root decoding are unchanged. Files: `csharp/src/Fory.Generator/ForyModelGenerator.Emission.cs`, `csharp/tests/Fory.Tests/ForyGeneratorTests.cs`, `csharp/tests/Fory.Tests/MetadataPublicationTests.cs`. | Shared metadata identity/match writes and resolver hash replacement could return default field values during parallel decoding. Aster's .NET binding (`Apache.Fory` consumer) is the user; its concurrent RPC integrity test is the adoption gate. This is a C#-local cache correction: shared protocol, type mappings and wire semantics are unchanged. | `345e4c771ccb4a895181fe8cb244ef2b27fb0196` / backport `e8109b29604aa409d0b65313d7d52eca9c4415fe` (on `v1.7.6`, clean `cherry-pick -x`); `3e7593710` on `upgrade/fory-v1.7.7` (clean `cherry-pick -x` of `e8109b29`) | carried (not in upstream 1.7.7: its six regression tests fail on bare `v1.7.7`) | No prerequisite patches. Apply the fix first, then the separate packaging change (the ledger lives on `main`, not on the upgrade branch). The metadata emitter and runtime sources are identical between the two baselines (`261dc92e` and `v1.7.6`). Future changes to `VersionHash`, local metadata hash ownership, generated compatible reads or hierarchy providers need re-review. Never carry a cached Boolean separately from its metadata identity, nor read mutable shared hashes after checking only a shared resolver version. `VersionHash()` is a semantic configuration fingerprint, not a resolver-local counter, on both baselines, so equal counters with differing configurations are not a supported case to synthesise. Independent codec tests use different registration names, hence different metadata hashes and resolver versions. Sequential registration between completed operations is supported and covered; concurrent registration is not introduced. |
 
 ### Upstreamed or dropped
 
 | Patch | Branch / local commit | Landed upstream as | Status | Reapply guidance |
 |---|---|---|---|---|
+| FORY-CS-001 ("fix(csharp): publish consistent metadata cache snapshots"): the C# generator publishes an immutable snapshot of the resolver version and both local metadata header hashes; shared metadata identity writes could return default field values during parallel decoding. Files: `csharp/src/Fory.Generator/ForyModelGenerator.Emission.cs`, `csharp/tests/Fory.Tests/ForyGeneratorTests.cs`, `csharp/tests/Fory.Tests/MetadataPublicationTests.cs` | `fix/csharp-metadata-publication` `345e4c771ccb4a895181fe8cb244ef2b27fb0196` (on upstream `main` `261dc92e`); `e8109b29604aa409d0b65313d7d52eca9c4415fe` on `v1.7.6`; `3e7593710` on `upgrade/fory-v1.7.7` | [apache/fory PR #4152](https://github.com/apache/fory/pull/4152) (issue #4151), merged as `b6023929b`, released in v1.7.8 (`6f67e5b49`, tag `v1.7.8` on `apache`; ancestor check passes) | upstreamed, 2026-11 | Do not reapply. Equivalence checked: `git patch-id --stable` is identical for `b6023929b`, `505facdf75094b0fa009a0bcaa657fd64622639e` and our `3e7593710`; the C# diffs of both commits (337 lines each) are byte-identical, the same three files including the six regression tests. Other C# changes in `v1.7.7..v1.7.8` are `Directory.Build.props` (version) and the README only, so 1.7.8 is 1.7.7 plus our fix exactly. Submission: the PR came from the owner's account; the commit's author is the owner. |
 | JavaScript TypeMeta preamble ("fix(javascript): align TypeMeta preamble with python/java/rust/go xlang bindings") | `fix/xlang-typemeta-num-hash-bits` / `df3f8dbbda65d559f5b9bf3bbb6f770655059442` | [PR #3603](https://github.com/apache/fory/pull/3603), merged 2026-04-22 | upstreamed | Do not reapply. Later [PR #3647](https://github.com/apache/fory/pull/3647) metadata changes supersede the original form. |
 
 ## Porting to a new upstream release
 
+**Conditional.** Everything below applies only when an Aster-only Fory patch exists. With none (since 2026-11-24, Aster consuming stock 1.7.8), a new upstream release needs no upgrade branch, no package and no tag: merge `apache/main` into `main`, record the new version in this ledger, and let the Aster repository move its pins (`Aster.csproj`, the Rust `fory-core` and `fory-derive` pins and the manifest's `[upstream.fory]`). Before moving the other bindings, check Go (1.7.8 freezes registration after the first serialize or deserialize, which matters if the Go binding registers late) and Java (1.7.8 changes UInt64 to float and double rounding, #4196, and float16 subnormals, #4195).
+
 - Keep the canonical logical fix as one commit on its own topic branch. Port it with `cherry-pick -x` and keep the source branch.
-- Keep the packaging change in its own commit, separate from the logical fix; this ledger lives on `main`. Aster does not submit the fix upstream; the README invites upstream maintainers to take it.
+- Keep the packaging change in its own commit, separate from the logical fix; this ledger lives on `main`. The README invites upstream maintainers to take a patch (FORY-CS-001 was in fact submitted upstream, #4152; see "Upstreamed or dropped").
 - Never rewrite published history or tags.
 - Compare against the upstream target, and check semantic equivalence when patch IDs differ (upstream may absorb the fix in a different form).
 - Delivery: compare the entire existing Forgejo file inventory and hashes before publishing. Never overwrite different bytes at an existing version, never publish this fork to nuget.org, and never treat skip-duplicate as integrity evidence. The Forgejo-extracted nuspec is part of the inventory, alongside the uploaded nupkg. Deliver the tested archive as-is: rebuilding can change package bytes at the same version.
@@ -111,7 +131,7 @@ git push origin upgrade/fory-v<ver>
 2. Pack from the packaging commit, checked out on `upgrade/fory-v<ver>` itself, with `-p:RepositoryCommit=<packaging commit>` (pack command below). The nuspec records the checked-out branch: a pack from a trial branch says `refs/heads/trial/…`, so pack from the upgrade branch or pass `-p:RepositoryBranch=refs/heads/upgrade/fory-v<ver>`. A repack changes only the nuspec and the `.psmdcp` id; compare the DLLs and analyzers with the tested pack.
 3. Run the Aster consumer trial against that exact archive (a local directory feed mapped exclusively to `Apache.Fory`, as in the 1.7.6 pre-publication check).
 4. Tag the packaging commit, only after validation and the consumer trial pass: `git tag -a aster-fory-v<ver>-aster.1 -m "Aster Apache.Fory <ver>-aster.1" <packaging commit>` and `git push origin aster-fory-v<ver>-aster.1`.
-5. Upload the tested archive, as-is, to the Forgejo NuGet feed `https://forge.emrul.dev/api/packages/Aster/nuget/index.json` (never nuget.org), with a package credential passed through an environment variable and a temporary NuGet configuration (never committed): `dotnet nuget push ../artifacts/nuget/Apache.Fory.<ver>-aster.1.nupkg --source https://forge.emrul.dev/api/packages/Aster/nuget/index.json --api-key "$FORGE_NUGET_TOKEN"`. The push uploads the `.snupkg` next to the `.nupkg` too (1.7.7 has one; 1.7.6 did not). Then verify the Forgejo file inventory, anonymously, against the local files' SHA-256 (Delivery, above): `curl -s https://forge.emrul.dev/api/v1/packages/Aster/nuget/Apache.Fory/<ver>-aster.1/files` lists each file's `sha256` (nupkg, extracted nuspec, snupkg, extracted pdb).
+5. Upload the tested archive, as-is, to the Forgejo NuGet feed `https://forge.emrul.dev/api/packages/Aster/nuget/index.json` (never nuget.org), with a package credential passed through an environment variable and a temporary NuGet configuration (never committed): `dotnet nuget push ../artifacts/nuget/Apache.Fory.<ver>-aster.1.nupkg --source https://forge.emrul.dev/api/packages/Aster/nuget/index.json --api-key "$FORGE_NUGET_TOKEN"`. The push uploads the `.snupkg` next to the `.nupkg` too (1.7.7 has one; 1.7.6 did not). Then verify the Forgejo file inventory against the local files' SHA-256 (Delivery, above), with a package-read token (the Forge NuGet endpoints require one, and anonymous requests now get 401 or 403): `curl -s -H "Authorization: token $FORGEJO_ADMIN_TOKEN" https://forge.emrul.dev/api/v1/packages/Aster/nuget/Apache.Fory/<ver>-aster.1/files` lists each file's `sha256` (nupkg, extracted nuspec, snupkg, extracted pdb).
 6. Aster bumps its `Apache.Fory` pin (`bindings/dotnet/src/Aster/Aster.csproj`, `Version="[<ver>-aster.1]"`) and runs its .NET gate: build the FFI library first (`cargo build -p aster_transport_ffi`), then `dotnet build`/`dotnet test bindings/dotnet/Aster.sln` with `-p:NativeLibraryPath=<that target dir>` and `ASTER_TEST_PYTHON` set to a Python with the raw WebTransport peer's test requirements.
 7. Update this ledger on `main` (merge upstream `main` first).
 
@@ -151,11 +171,20 @@ dotnet <harness-baseline-or-fixed>/Harness.dll cold true <evidence-directory>
 
 Remaining work:
 
-- Absorb an upstream release once one contains the fix (Aster does not submit upstream; the README invites upstream maintainers to take it).
-- The full .NET release gate against the next exact Aster release candidate (adoption is done: the .NET binding pins `Apache.Fory [1.7.7-aster.1]`, and its suite passes on that pack).
+- Absorb an upstream release once one contains the fix: done 2026-11-24 (v1.7.8, PR #4152).
+- The full .NET release gate against the next exact Aster release candidate on stock `Apache.Fory 1.7.8` (the 2026-11-24 trial passed; the candidate gate is the Aster release's).
+- Decide whether to keep this fork as an empty-patch placeholder (cheap; keeps the ledger and the mirror) or archive it (owner).
 - Higher-precision cold-start performance evidence if a strict paired sub-1% claim is needed; the bounded results below preserve the uncertainty.
 
 ## History
+
+### 2026-11-24: graduated to stock `Apache.Fory 1.7.8`
+
+- Merged `apache/main` (conflict: `README.md`, the Aster preamble kept above upstream's new license header). FORY-CS-001 moved to "Upstreamed or dropped" (apache/fory PR #4152, released in v1.7.8). No `upgrade/fory-v1.7.8` branch, no `-aster.2` package, no tag, no pack or push. Existing branches and tags (`aster-fory-v1.7.7-aster.1`, `upgrade/fory-v1.7.7`, `v1.7.6-aster.1`) are kept; Forge refuses their deletion anyway.
+- .NET gate (Aster `d4180d60` plus the 1.7.8 edits, runbook 5.6 step 6: `cargo build --locked -p aster_transport_ffi`, `dotnet build bindings/dotnet/Aster.sln -warnaserror`, `dotnet test --no-build`): stock `Apache.Fory 1.7.8` from nuget.org, build 0 warnings and 0 errors, **626 passed, 0 failed, 9 skipped** (3 `PanicGuardTests`, 6 `CoordinationLiveTests`; none Fory). Same-HEAD comparison on `Apache.Fory 1.7.7-aster.1` from the Forge feed (restore package SHA-256 `d855bd0e31a819bfd4a8b886cacec1c508888f2a1d0a9101432dc74ebf2db9ff`, matching the 1.7.7-aster.1 inventory recorded above): build 0 warnings and 0 errors, **626 passed, 0 failed, 9 skipped**, identical skip lists. The 1.7.8 run kept no per-test log, so the 626 passing names were not diffed one by one; identical totals and skip sets with 0 failures on both sides mean no test changed outcome.
+- Rust `fory-core` and `fory-derive` 1.7.8: four upstream commits since 1.7.7 (smart-pointer `str` and slice support, `paste` to `pastey`, CI refs). The diff shows no wire change for any type Aster uses (`String::write_data` delegates to a new `PointeeSerializer<str>` with the identical body; new impls are additive). Evidence: `cargo check --workspace --locked` clean; `aster_transport_core` 416 + 115 passed; the golden-vector decode tests (`dynamic_payload_vector`, `rpc_contract` python golden) pass on 1.7.8 reading pyfory 1.7.7 bytes. Not run: Rust 1.7.8 writing to pyfory, Java, Go or TypeScript peers, and those bindings' suites. One in-suite test, `rpc_sessions::sessions_close_at_the_stream_limit_without_a_fresh_stream`, failed on a loaded host on both 1.7.7 and 1.7.8 and passes alone; it is not Fory related.
+- Other bindings in `v1.7.7..v1.7.8`, not moved: Go freezes registration after the first serialize or deserialize (a behaviour change if the Go binding registers late); Java changes UInt64 to float and double rounding (#4196) and float16 subnormals (#4195); Python only removes unused codegen.
+- The Forge NuGet feed now requires a token for package files (anonymous 401); the 2026-10 "verified anonymously" statements in this ledger no longer hold and are corrected above.
 
 ### 2026-10-21: `Apache.Fory 1.7.7-aster.1` on upstream v1.7.7
 
